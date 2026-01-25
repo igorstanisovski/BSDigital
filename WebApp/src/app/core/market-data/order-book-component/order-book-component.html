@@ -1,0 +1,25 @@
+<div class="page-wrapper">
+  <h2>BTC/EUR Depth Chart</h2>
+
+  <div class="quote-container">
+    <mat-form-field appearance="fill">
+      <mat-label>BTC Amount</mat-label>
+      <input
+        matInput
+        type="number"
+        step="0.00001"
+        [(ngModel)]="btcAmount"
+        (input)="calculateQuote()"
+        placeholder="Enter BTC to buy"
+      />
+    </mat-form-field>
+
+    <div *ngIf="btcAmount > 0" class="quote-text">
+      <p *ngIf="quote !== null">Quote: {{ quote | number: '1.2-5' }} EUR</p>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="depthChart"></canvas>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.quote-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.quote-text p {
+  margin: 5px 0;
+}
+
+.chart-container {
+  width: 80%;
+  max-width: 800px;
+  height: 400px;
+}
