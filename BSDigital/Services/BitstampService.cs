@@ -12,9 +12,11 @@ namespace BSDigital.Services
     public class BitstampService
     {
         private readonly IBitstampClient _client;
+        private readonly IAuditService _auditService;
         private readonly IHubContext<MarketDataHub> _hubContext;
+        private DateTime _lastSent = DateTime.MinValue;
 
-        public BitstampService(IBitstampClient client, IHubContext<MarketDataHub> hubContext)
+        public BitstampService(IBitstampClient client, IHubContext<MarketDataHub> hubContext, IAuditService auditService)
         {
             _client = client;
             _client.OnMessage += async (json) =>
@@ -29,6 +31,7 @@ namespace BSDigital.Services
                 }
             };
             _hubContext = hubContext;
+            _auditService = auditService;
         }
 
         public async Task StartAsync()
@@ -43,7 +46,7 @@ namespace BSDigital.Services
 
         private async Task HandleMessage(string json)
         {
-            Console.WriteLine("Received something....");
+           // Console.WriteLine("Received something....");
 
             BitstampMessage? message;
 
@@ -66,12 +69,31 @@ namespace BSDigital.Services
             var bids = MapLevels(message.Data.Bids, true);
             var asks = MapLevels(message.Data.Asks, false);
 
-            var orderBook = new OrderBook(message.Data.Timestamp, bids, asks);
-
             var bidsCumulativeDepth = CalculateCumulativeDepth(bids);
             var asksCumulativeDepth = CalculateCumulativeDepth(asks);
 
-            await PublishDepthAsync(bidsCumulativeDepth, asksCumulativeDepth);
+            var orderBook = new OrderBook(message.Data.Timestamp, bidsCumulativeDepth, asksCumulativeDepth);
+
+            if (ShouldPublish())
+            {
+                _lastSent = DateTime.UtcNow;
+
+                await PublishDepthAsync(bidsCumulativeDepth, asksCumulativeDepth);
+
+                var entity = new OrderBookSnapshotEntity
+                {
+                    CreatedOn = DateTime.UtcNow,
+                    Code = "BTC/EUR",
+                    Body = JsonConvert.SerializeObject(orderBook, Formatting.Indented)
+                };
+
+                _auditService.LogSnapshotAsync(entity);
+            }
+        }
+
+        private bool ShouldPublish()
+        {
+            return (DateTime.UtcNow - _lastSent) > TimeSpan.FromMilliseconds(1000);
         }
 
         private List<OrderBookItem> MapLevels(List<List<string>> rawLevels, bool descending)
