@@ -10,6 +10,7 @@ import { environment } from '../../../../environment/environment.dev';
 export class OrderBookService {
   private client: SignalRClientService;
   public depth$ = new BehaviorSubject<DepthSnapshot | null>(null);
+  public quote$ = new BehaviorSubject<number | null>(null);
   private readonly BASE_URL: string = environment.BASE_URL
 
   constructor() {
@@ -18,9 +19,23 @@ export class OrderBookService {
 
   async connect() {
     await this.client.start();
+    this.listenForDepth();
+    this.listenForQuote();
+  }
 
+  listenForDepth(): void {
     this.client.on<DepthSnapshot>('DepthUpdate', snapshot => {
       this.depth$.next(snapshot);
     });
+  }
+
+  listenForQuote(): void {
+    this.client.on<number>('QuoteUpdated', value => {
+      this.quote$.next(value);
+    });
+  }
+
+  invokeBtcChange(btcAmount: number): void {
+    this.client.invoke<void>('SetBtcAmount', btcAmount)
   }
 }

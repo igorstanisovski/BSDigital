@@ -9,13 +9,13 @@
         type="number"
         step="0.00001"
         [(ngModel)]="btcAmount"
-        (input)="calculateQuote()"
+        (input)="onBtcAmountChange()"
         placeholder="Enter BTC to buy"
       />
     </mat-form-field>
 
     <div *ngIf="btcAmount > 0" class="quote-text">
-      <p *ngIf="quote !== null">Quote: {{ quote | number: '1.2-5' }} EUR</p>
+      <p *ngIf="quote !== null">Quote: {{ quote | number:'1.2-5' }} EUR</p>
     </div>
   </div>
 

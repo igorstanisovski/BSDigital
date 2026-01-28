@@ -3,7 +3,7 @@ import * as signalR from '@microsoft/signalr';
 export class SignalRClientService {
   private hubConnection!: signalR.HubConnection;
 
-  constructor(private hubUrl: string) {}
+  constructor(private hubUrl: string) { }
 
   start(): Promise<void> {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -22,5 +22,9 @@ export class SignalRClientService {
 
   on<T>(eventName: string, handler: (data: T) => void): void {
     this.hubConnection.on(eventName, handler);
+  }
+
+  invoke<T>(methodName: string, ...args: any[]): Promise<T> {
+    return this.hubConnection.invoke<T>(methodName, ...args);
   }
 }

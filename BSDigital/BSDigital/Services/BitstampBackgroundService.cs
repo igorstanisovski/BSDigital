@@ -1,11 +1,13 @@
 ﻿
+using BSDigital.Interfaces;
+
 namespace BSDigital.Services
 {
     public class BitstampBackgroundService : BackgroundService
     {
-        private readonly BitstampService _bitstampService;
+        private readonly IBitstampService _bitstampService;
 
-        public BitstampBackgroundService(BitstampService bitstampService)
+        public BitstampBackgroundService(IBitstampService bitstampService)
         {
             _bitstampService = bitstampService;
         }

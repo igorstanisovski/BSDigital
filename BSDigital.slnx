@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BSDigital/BSDigital/BSDigital.csproj"/>
+  <Project Path="BSDigital/BSDigital.Tests/BSDigital.Tests.csproj" />
+</Solution>

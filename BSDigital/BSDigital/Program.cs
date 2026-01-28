@@ -15,14 +15,11 @@ namespace BSDigital
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.WebHost.UseUrls("http://0.0.0.0:8081");
-
             builder.Services.AddSingleton<IOrderBookSnapshotRepository, OrderBookSnapshotRepository>();
             builder.Services.AddSingleton<IAuditService, AuditService>();
-
-            // Add services to the container.
+            builder.Services.AddSingleton<IOrderBookService, OrderBookService>();
             builder.Services.AddSingleton<IBitstampClient, BitstampClient>();
-            builder.Services.AddSingleton<BitstampService>();
+            builder.Services.AddSingleton<IBitstampService, BitstampService>();
 
             builder.Services.AddHostedService<BitstampBackgroundService>();
 
@@ -38,11 +35,15 @@ namespace BSDigital
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            var corsOrigins = builder.Configuration["CORS_ORIGINS"]
+                ?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                ?? Array.Empty<string>();
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", policy =>
                     policy
-                        .WithOrigins("http://localhost:4200")
+                        .WithOrigins(corsOrigins)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials()
@@ -60,8 +61,6 @@ namespace BSDigital
             {
                 app.MapOpenApi();
             }
-
-            // app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

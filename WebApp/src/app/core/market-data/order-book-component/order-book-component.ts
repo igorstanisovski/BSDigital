@@ -23,7 +23,9 @@ export class OrderBookComponent implements OnInit, OnDestroy {
   asks: DepthPoint[] = [];
 
   private snapshot$ = new Subject<DepthSnapshot>();
-  private snapshotSub!: Subscription;
+  private quote$ = new Subject<number>();
+  
+  private subscription!: Subscription;
 
   constructor(
     private orderBookService: OrderBookService,
@@ -43,19 +45,23 @@ export class OrderBookComponent implements OnInit, OnDestroy {
       this.asks = snapshot.asks;
     });
 
-    // Throttle quote calculation to every 200ms
-    this.snapshotSub = this.snapshot$
-      .pipe(throttleTime(200))
-      .subscribe(() => {
-        if (this.btcAmount > 0) {
-          this.calculateQuote();
-          this.cdr.markForCheck();
-        }
-      });
+    this.orderBookService.quote$.subscribe(value => {
+      this.quote$.next(value || 0);
+    })
+
+    this.subscription = this.quote$.subscribe(value => {
+      console.log(value);
+      if(!value || value === 0) {
+        this.quote = null;
+      } else {
+        this.quote = value;
+      }
+      this.cdr.markForCheck();
+    });
   }
 
    ngOnDestroy(): void {
-    this.snapshotSub.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   private getChartConfig(): ChartConfiguration {
@@ -77,27 +83,8 @@ export class OrderBookComponent implements OnInit, OnDestroy {
     };
   }
 
-  calculateQuote() {
-    if (!this.asks || this.asks.length === 0 || this.btcAmount <= 0) {
-      this.quote = null;
-      return;
-    }
-
-    let remaining = this.btcAmount;
-    let totalCost = 0;
-
-    for (const ask of this.asks) {
-      const availableAtLevel = ask.cumulative;
-      const prev = totalCost / ask.price;
-      const take = Math.min(remaining, availableAtLevel - prev);
-
-      totalCost += take * ask.price;
-      remaining -= take;
-
-      if (remaining <= 0) break;
-    }
-
-    this.quote = remaining <= 0 ? totalCost : null;
+  onBtcAmountChange(): void {
+    this.orderBookService.invokeBtcChange(this.btcAmount || 0)
   }
 
   private updateChart(snapshot: DepthSnapshot) {
