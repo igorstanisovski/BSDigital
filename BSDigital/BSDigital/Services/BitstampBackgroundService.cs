@@ -12,7 +12,7 @@ namespace BSDigital.Services
             _bitstampService = bitstampService;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
+        {   
             await _bitstampService.StartAsync();
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }

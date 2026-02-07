@@ -1,0 +1,29 @@
+<div>
+    <h2>BTC/EUR Historic depth chart</h2>
+
+    <div class="datetime-container">
+        <mat-form-field appearance="fill">
+            <mat-label>Pick a date</mat-label>
+            <input matInput [matDatepicker]="datePicker" [formControl]="selectedDate">
+            <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Pick a time</mat-label>
+            <input matInput [matTimepicker]="timePicker">
+            <mat-timepicker-toggle matIconSuffix [for]="timePicker" />
+            <mat-timepicker #timePicker />
+        </mat-form-field>
+    </div>
+
+    <button matButton="filled" (click)="getHistoricalData()">Get data</button>
+
+    <div>
+        HERE GOES THE CHART
+    </div>
+
+    <div>
+        <button matButton="filled" routerLink="../live">Check live data</button>
+    </div>
+</div>

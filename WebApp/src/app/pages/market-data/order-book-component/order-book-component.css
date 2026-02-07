@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  max-width: 1200px;
+  width: 100%;
+}
+
+h2 {
+  text-align: center;
+}
+
+.quote-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.quote-text {
+  text-align: center;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: auto !important;
+}

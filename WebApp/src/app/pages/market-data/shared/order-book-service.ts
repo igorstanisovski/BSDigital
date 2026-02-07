@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import { SignalRClientService } from '../../signal-rclient-service';
+import { SignalRClientService } from '../../../core/signal-rclient-service';
 import { DepthSnapshot } from '../model/depth.model';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../../../environment/environment.dev';

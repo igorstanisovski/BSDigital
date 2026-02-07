@@ -33,6 +33,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTimepickerModule } from '@angular/material/timepicker'
 
 @NgModule({
   imports: [
@@ -70,7 +71,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatSortModule,
     MatPaginatorModule,
     MatNativeDateModule,
-    MatDividerModule
+    MatDividerModule,
+    MatTimepickerModule
   ],
   exports: [
     MatDividerModule,
@@ -106,7 +108,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatSnackBarModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatTimepickerModule
   ],
   providers: [MatDatepickerModule],
 })

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { OrderBookService } from './order-book-service';
+import { OrderBookService } from '../shared/order-book-service';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { DepthPoint, DepthSnapshot } from '../model/depth.model';
 import { SharedModule } from '../../../shared/shared.module';
@@ -24,19 +24,21 @@ export class OrderBookComponent implements OnInit, OnDestroy {
 
   private snapshot$ = new Subject<DepthSnapshot>();
   private quote$ = new Subject<number>();
-  
+
   private subscription!: Subscription;
+  private depthSubscription?: Subscription;
+  private quoteServiceSubscription?: Subscription;
 
   constructor(
     private orderBookService: OrderBookService,
-    private cdr : ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.chart = new Chart('depthChart', this.getChartConfig());
     this.orderBookService.connect();
-    
-    this.orderBookService.depth$.subscribe(snapshot => {
+
+    this.depthSubscription = this.orderBookService.depth$.subscribe(snapshot => {
       if (!snapshot) return;
 
       this.snapshot$.next(snapshot);
@@ -45,13 +47,13 @@ export class OrderBookComponent implements OnInit, OnDestroy {
       this.asks = snapshot.asks;
     });
 
-    this.orderBookService.quote$.subscribe(value => {
+    this.quoteServiceSubscription = this.orderBookService.quote$.subscribe(value => {
       this.quote$.next(value || 0);
     })
 
     this.subscription = this.quote$.subscribe(value => {
       console.log(value);
-      if(!value || value === 0) {
+      if (!value || value === 0) {
         this.quote = null;
       } else {
         this.quote = value;
@@ -60,8 +62,14 @@ export class OrderBookComponent implements OnInit, OnDestroy {
     });
   }
 
-   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this?.depthSubscription?.unsubscribe();
+    this?.quoteServiceSubscription?.unsubscribe();
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null as any;
+    }
   }
 
   private getChartConfig(): ChartConfiguration {
@@ -75,6 +83,9 @@ export class OrderBookComponent implements OnInit, OnDestroy {
       },
       options: {
         animation: false,
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 2,
         scales: {
           x: { type: 'linear', title: { display: true, text: 'Price (EUR)' } },
           y: { title: { display: true, text: 'Cumulative Volume' }, beginAtZero: true, max: 40 }
