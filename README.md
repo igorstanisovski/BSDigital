@@ -1,30 +1,47 @@
 # BSDigital
 BTC/EUR Depth Chart
 
-## How to start the app - Windows OS
+# How to start the app - Windows OS
 
-### Setup - Prerequisites
+## Setup - Prerequisites
+- .NET SDK 10.0 or higher
+- Node.js 20.0 or higher
+- Docker Desktop
+- Visual Studio 2026 (optional, for development)
+- Visual Studio Code (optional, for Angular development)
 
-Visual Studio 2026 (should be compatible also with VS2022)  
-Visual Studio Code  
-Docker Desktop  
-PostgreSQL/pgAdmin
+## How to start
 
-### How to start 
+### Option 1: Using the startup script  
+1. Open PowerShell in the root directory
+2. Run the startup script:
+```powershell
+   .\build.ps1
+```
+3. The script will:
+   - Check all prerequisites
+   - Install npm packages (use `-SkipNpm` flag to skip: `.\build.ps1 -SkipNpm`)
+   - Start Docker containers (PostgreSQL + .NET server)
+   - Start Angular development server
+4. Go to `http://localhost:4200` and start playing!
 
-1. Start Docker Desktop
-2. Load the BSDigital.slnx file into VS2026
-3. Start the app BSDigital with profile Container (Dockerfile) <sup>[1]</sup>
-4. Load the WebApp folder into VS Code
-5. Run `npm install`
-6. Run `ng serve`
-7. Go to `localhost:4200` and start playing!
+**Services:**
+- Frontend: http://localhost:4200
+- Backend API: http://localhost:5000
+- PostgreSQL: localhost:5432
 
-<sup>Notes: </sup>  
-<sup>
-[1] Postgres instance is running with default username and password, EF should create database if it doesn't exist
-</sup>
+**To stop:**
+- Press `Ctrl+C` to stop the Angular dev server
+- Run `docker-compose down` to stop Docker containers
 
-### How to run tests
+## How to run tests
+1. Open PowerShell in the root directory
+2. Run:
+```powershell
+   dotnet test
+```
 
-1. Open developer powershell in VS2026 and on root run `dotnet test`
+## Notes
+- PostgreSQL runs in Docker with default credentials (username: `postgres`, password: `postgres`)
+- Database migrations are applied automatically on startup in Development mode
+- CORS is configured to allow `http://localhost:4200`
