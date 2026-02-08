@@ -8,6 +8,35 @@ h2 {
   text-align: center;
 }
 
+.connection-status {
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.connection-status.connected {
+  background-color: #4caf50;
+  color: white;
+}
+
+.connection-status.connecting {
+  background-color: #ff9800;
+  color: white;
+}
+
+.connection-status.error,
+.connection-status.disconnected {
+  background-color: #f44336;
+  color: white;
+}
+
+.connection-status.reconnecting {
+  background-color: #2196f3;
+  color: white;
+}
+
 .quote-container {
   display: flex;
   flex-direction: column;
@@ -18,16 +47,4 @@ h2 {
 
 .quote-text {
   text-align: center;
-}
-
-.chart-container {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  position: relative;
-}
-
-.chart-container canvas {
-  width: 100% !important;
-  height: auto !important;
 }

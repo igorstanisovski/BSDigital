@@ -1,6 +1,10 @@
 <div>
   <h2>BTC/EUR Depth Chart</h2>
 
+  <div class="connection-status" [ngClass]="connectionStatus">
+    Status: {{ connectionStatus }}
+  </div>
+
   <div class="quote-container">
     <mat-form-field appearance="fill">
       <mat-label>BTC Amount</mat-label>
@@ -17,7 +21,6 @@
     </div>
   </div>
 
-  <div class="chart-container">
-    <canvas id="depthChart"></canvas>
-  </div>
+  <app-chart-component></app-chart-component>
+
 </div>

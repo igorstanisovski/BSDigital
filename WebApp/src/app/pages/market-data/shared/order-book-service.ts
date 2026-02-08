@@ -1,8 +1,10 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { SignalRClientService } from '../../../core/signal-rclient-service';
 import { DepthSnapshot } from '../model/depth.model';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { environment } from '../../../../environment/environment.dev';
+import { Subject } from 'rxjs';
+import { ConnectionStatus } from '../../../core/connection-status.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -13,14 +15,59 @@ export class OrderBookService {
   public quote$ = new BehaviorSubject<number | null>(null);
   private readonly BASE_URL: string = environment.BASE_URL
 
+  public connectionStatus$ = new Subject<ConnectionStatus>();
+  public onConnectionStatus$ = this.connectionStatus$.asObservable();
+  private errorSubscription?: Subscription;
+  private reconnectingSubscription?: Subscription;
+  private reconnectedSubscription?: Subscription;
+  private closedSubscription?: Subscription;
+
   constructor() {
     this.client = new SignalRClientService(`${this.BASE_URL}/market-data`);
+    this.setupErrorHandling();
   }
 
-  async connect() {
-    await this.client.start();
-    this.listenForDepth();
-    this.listenForQuote();
+  private setupErrorHandling(): void {
+    this.errorSubscription = this.client.onConnectionError$.subscribe(error => {
+      this.connectionStatus$.next(ConnectionStatus.Error);
+    });
+
+    this.reconnectingSubscription = this.client.onReconnecting$.subscribe(() => {
+      this.connectionStatus$.next(ConnectionStatus.Reconnecting);
+    });
+
+    this.reconnectedSubscription = this.client.onReconnected$.subscribe(() => {
+      this.connectionStatus$.next(ConnectionStatus.Reconnecting);
+    });
+
+    this.closedSubscription = this.client.onClosed$.subscribe((error) => {
+      if (error) {
+        this.connectionStatus$.next(ConnectionStatus.Error);
+      } else {
+        this.connectionStatus$.next(ConnectionStatus.Disconnected);
+      }
+    });
+  }
+
+  connect(): void {
+    this.connectionStatus$.next(ConnectionStatus.Connecting);
+    this.client.start()
+      .then(() => {
+        this.connectionStatus$.next(ConnectionStatus.Connected);
+        this.listenForDepth();
+        this.listenForQuote();
+      })
+      .catch(err => {
+        this.connectionStatus$.next(ConnectionStatus.Error);
+      });
+  }
+
+  disconnect(): void {
+    this.client.stop();
+    this.errorSubscription?.unsubscribe();
+    this.reconnectingSubscription?.unsubscribe();
+    this.reconnectedSubscription?.unsubscribe();
+    this.closedSubscription?.unsubscribe();
   }
 
   listenForDepth(): void {

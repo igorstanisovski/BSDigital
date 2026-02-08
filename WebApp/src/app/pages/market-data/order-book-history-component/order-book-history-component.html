@@ -11,17 +11,15 @@
 
         <mat-form-field appearance="fill">
             <mat-label>Pick a time</mat-label>
-            <input matInput [matTimepicker]="timePicker">
+            <input matInput [matTimepicker]="timePicker" [formControl]="selectedTime">
             <mat-timepicker-toggle matIconSuffix [for]="timePicker" />
-            <mat-timepicker #timePicker />
+            <mat-timepicker #timePicker interval="5min"/>
         </mat-form-field>
     </div>
 
     <button matButton="filled" (click)="getHistoricalData()">Get data</button>
 
-    <div>
-        HERE GOES THE CHART
-    </div>
+    <app-chart-component [snapshot]="currentSnapshot"></app-chart-component>
 
     <div>
         <button matButton="filled" routerLink="../live">Check live data</button>
