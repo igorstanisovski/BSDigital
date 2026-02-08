@@ -12,7 +12,7 @@ BTC/EUR Depth Chart
 
 ## How to start
 
-### Option 1: Using the startup script  
+### Using the startup script  
 1. Open PowerShell in the root directory
 2. Run the startup script:
 ```powershell
