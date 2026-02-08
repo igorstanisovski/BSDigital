@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BSDigital.Entities
 {
     [Table("ORDER_BOOK_SNAPSHOT")]
-    [Index(nameof(CreatedOn), IsUnique = true)]
+    [Index(nameof(Code), nameof(CreatedOn))]
     public class OrderBookSnapshotEntity
     {
         [Key]

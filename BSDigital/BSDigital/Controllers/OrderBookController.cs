@@ -19,9 +19,9 @@ namespace BSDigital.Controllers
 
         [HttpGet]
         [Route("historical-data")]
-        public async Task<DepthSnapshot> GetHistoricalData()
+        public async Task<DepthSnapshot> GetHistoricalData([FromQuery] string code, [FromQuery] DateTime timestamp)
         {
-            var response = await _orderBookApiService.FetchHistoricalData("BTC/EUR", DateTime.UtcNow);
+            var response = await _orderBookApiService.FetchHistoricalData(code, timestamp);
             return response;
         }
     }

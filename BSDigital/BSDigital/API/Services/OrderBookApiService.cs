@@ -2,6 +2,7 @@
 using BSDigital.DTO;
 using BSDigital.Interfaces;
 using Newtonsoft.Json;
+using System.Reactive;
 
 namespace BSDigital.API.Services
 {
@@ -32,7 +33,7 @@ namespace BSDigital.API.Services
 
             return new DepthSnapshot
             {
-                Timestamp = snapshot.CreatedOn,
+                Timestamp = DateTimeOffset.FromUnixTimeSeconds(orderBook.Timestamp).UtcDateTime,
                 Asks = orderBook.Asks,
                 Bids = orderBook.Bids
             };
