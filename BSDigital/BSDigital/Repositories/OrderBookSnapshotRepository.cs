@@ -1,7 +1,9 @@
 ﻿using BSDigital.DataAccess;
 using BSDigital.Entities;
 using BSDigital.Interfaces;
+using BSDigital.Queries;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BSDigital.Repositories
 {
@@ -16,9 +18,16 @@ namespace BSDigital.Repositories
 
         public async Task AddRangeAsync(IEnumerable<OrderBookSnapshotEntity> snapshots)
         {
-            await using var db = await _contextFactory.CreateDbContextAsync();
-            db.OrderBookSnapshots.AddRange(snapshots);
-            await db.SaveChangesAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            context.OrderBookSnapshots.AddRange(snapshots);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<OrderBookSnapshotEntity?> GetSnapshotByTimestamp(string code, DateTime timestamp)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            var snapshot = await context.Database.SqlQueryRaw<OrderBookSnapshotEntity>(OrderBookSnapshotQueries.GetHistoricalDataByTimestamp, code, timestamp).FirstOrDefaultAsync(); ;
+            return snapshot;
         }
     }
 }

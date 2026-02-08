@@ -2,11 +2,17 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../utils/material.module';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChartComponent } from './chart-component/chart-component';
 
 const THIRD_MODULES = [
   MaterialModule,
-  FormsModule
+  FormsModule,
+  ReactiveFormsModule
+]
+
+const COMPONENTS = [
+  ChartComponent
 ]
 
 @NgModule({
@@ -14,11 +20,13 @@ const THIRD_MODULES = [
   imports: [
     CommonModule,
     RouterModule,
-    ...THIRD_MODULES
+    ...THIRD_MODULES,
+    ...COMPONENTS
   ],
   exports: [
     RouterModule,
-    ...THIRD_MODULES
+    ...THIRD_MODULES,
+    ...COMPONENTS
   ]
 })
 export class SharedModule { }

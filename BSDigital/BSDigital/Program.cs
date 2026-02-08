@@ -1,4 +1,6 @@
 
+using BSDigital.API.Interfaces;
+using BSDigital.API.Services;
 using BSDigital.Clients;
 using BSDigital.DataAccess;
 using BSDigital.Hubs;
@@ -20,6 +22,7 @@ namespace BSDigital
             builder.Services.AddSingleton<IOrderBookService, OrderBookService>();
             builder.Services.AddSingleton<IBitstampClient, BitstampClient>();
             builder.Services.AddSingleton<IBitstampService, BitstampService>();
+            builder.Services.AddSingleton<IOrderBookApiService, OrderBookApiService>();
 
             builder.Services.AddHostedService<BitstampBackgroundService>();
 
