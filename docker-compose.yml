@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: bsdigital-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bsdigital
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./BsDigital/BsDigital
+      dockerfile: Dockerfile
+    container_name: bsdigital-server
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__Main=Host=postgres;Port=5432;Database=bsdigital;Username=postgres;Password=postgres;Trust Server Certificate=true;SSL Mode=Disable;Pooling=false;Timezone=UTC
+      - CORS_ORIGINS=http://localhost:4200
+    depends_on:
+      postgres:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  postgres-data:

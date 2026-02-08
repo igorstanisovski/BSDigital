@@ -30,7 +30,7 @@ namespace BSDigital.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error in HandleMessage: {ex}");
+                    throw ex;
                 }
             };
 
@@ -70,7 +70,6 @@ namespace BSDigital.Services
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"JSON parse error: {ex.Message}");
                 return;
             }
 
