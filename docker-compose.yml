@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16
@@ -28,8 +26,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__Main=Host=postgres;Port=5432;Database=bsdigital;Username=postgres;Password=postgres;Trust Server Certificate=true;SSL Mode=Disable;Pooling=false;Timezone=UTC
+      - ConnectionStrings__Main=Host=postgres;Port=5432;Database=bsdigital;Username=postgres;Password=postgres;Trust Server Certificate=true;SSL Mode=Disable;Pooling=false;Timezone=UTC;
       - CORS_ORIGINS=http://localhost:4200
+      - Logging__LogLevel__Default=Error
+      - Logging__LogLevel__Microsoft.AspNetCore=Error
     depends_on:
       postgres:
         condition: service_healthy

@@ -133,7 +133,8 @@ $webAppPath = Join-Path $PSScriptRoot "WebApp"
 Push-Location $webAppPath
 
 # Start ng serve in a new PowerShell window
-ng serve
+Start-Process powershell `
+  -ArgumentList "-NoExit", "-Command", "cd '$webAppPath'; ng.cmd serve"
 
 Write-Host "✓ Angular dev server starting in new window..." -ForegroundColor Green
 Write-Host "→ Angular app will be available at http://localhost:4200" -ForegroundColor Cyan
