@@ -6,6 +6,7 @@ BTC/EUR Depth Chart
 ## Setup - Prerequisites
 - .NET SDK 10.0 or higher
 - Node.js 20.0 or higher
+- Angular 17.0 or higher
 - Docker Desktop
 - Visual Studio 2026 (optional, for development)
 - Visual Studio Code (optional, for Angular development)

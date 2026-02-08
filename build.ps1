@@ -57,6 +57,29 @@ catch {
 
 Write-Host ""
 
+Write-Host "Checking Angular CLI..." -ForegroundColor Yellow
+try {
+    $ngVersionOutput = ng version --json 2>$null | ConvertFrom-Json
+    $installedNgVersion = [Version]$ngVersionOutput.cli.version
+
+    Write-Host "Angular CLI found: $installedNgVersion" -ForegroundColor Green
+
+    $requiredNgVersion = [Version]"17.0"
+
+    if ($installedNgVersion -lt $requiredNgVersion) {
+        Write-Host "Angular CLI version $requiredNgVersion or higher is required" -ForegroundColor Red
+        Write-Host "Update with: npm install -g @angular/cli" -ForegroundColor Yellow
+        exit 1
+    }
+}
+catch {
+    Write-Host "Angular CLI not found." -ForegroundColor Red
+    Write-Host "Install with: npm install -g @angular/cli" -ForegroundColor Yellow
+    exit 1
+}
+
+Write-Host ""
+
 Write-Host "Checking Docker..." -ForegroundColor Yellow
 try {
     $dockerVersion = docker --version
@@ -126,7 +149,6 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "Docker containers started successfully" -ForegroundColor Green
 Write-Host ""
 
-# Step 6: Start Angular development server
 Write-Host "Starting Angular development server..." -ForegroundColor Yellow
 $webAppPath = Join-Path $PSScriptRoot "WebApp"
 
