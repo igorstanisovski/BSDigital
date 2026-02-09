@@ -5,6 +5,7 @@ import { FormControl } from '@angular/forms';
 import { OrderBookApiService } from '../shared/order-book-api-service';
 import { DepthSnapshot } from '../model/depth.model';
 import { ChartComponent } from '../../../shared/chart-component/chart-component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-order-book-history-component',
@@ -21,7 +22,9 @@ export class OrderBookHistoryComponent {
 
   currentSnapshot?: DepthSnapshot;
 
-  constructor(private orderBookApiService: OrderBookApiService) {
+  constructor(
+    private orderBookApiService: OrderBookApiService,
+    private snackBar: MatSnackBar) {
   }
 
   private mergeDateTime(): string {
@@ -43,11 +46,21 @@ export class OrderBookHistoryComponent {
     const dateTime = this.mergeDateTime();
     this.orderBookApiService.getHistoricalData(dateTime).subscribe({
       next: (data) => {
+        this.snackBar.open('Successfully fetched latest data within an hour!', undefined, {
+          duration: 2500,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
         if (this.chartComponent) {
           this.chartComponent.updateChart(data);
         }
       },
       error: (e) => {
+        this.snackBar.open('No data available within an hour!', undefined, {
+          duration: 2500,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
         if (this.chartComponent) {
           this.chartComponent.clearChart();
         }
